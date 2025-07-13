@@ -13,8 +13,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "title": "prueba2",
-    "author": "jose",
-    "url": "www.testing.com.ar",
-    "likes": 10
+    "title": "River campeón",
+    "author": "Marcelo Daniel Gallardo",
+    "url": "www.river.com.ar",
+    "likes": 912
 }
