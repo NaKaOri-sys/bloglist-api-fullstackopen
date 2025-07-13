@@ -1,0 +1,20 @@
+@urlBase = http://localhost:3001
+
+###GetAll 
+{{urlBase}}/api/blogs
+
+###GetByID
+GET {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c
+
+
+###Create blog
+POST {{urlBase}}/api/blogs
+Accept: application/json
+Content-Type: application/json
+
+{
+    "title": "prueba2",
+    "author": "jose",
+    "url": "www.testing.com.ar",
+    "likes": 10
+}
