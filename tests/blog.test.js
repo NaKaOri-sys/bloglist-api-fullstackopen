@@ -5,7 +5,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const listHelper = require('../utils/list_helper')
-
+const blogHelper = require('../utils/blogs_helper')
 const api = supertest(app)
 
 const blogs = [
@@ -59,14 +59,14 @@ const blogs = [
   }
 ]
 
-// beforeEach(async () => {
-//   await Blog.deleteMany({})
-//   let blogObject = new Blog(helper.initialBlog[0])
-//   await blogObject.save()
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  let blogObject = new Blog(blogHelper.initialBlog[0])
+  await blogObject.save()
 
-//   blogObject = new Blog(helper.initialBlog[1])
-//   await blogObject.save()
-// })
+  blogObject = new Blog(blogHelper.initialBlog[1])
+  await blogObject.save()
+})
 
 test('dummy returns one', () => {
   const blogs = []
@@ -190,32 +190,32 @@ describe('mostLikes', () => {
     assert.deepStrictEqual(result, authorExpected)
   })
 })
-// test('blog list are equals than db', async () => {
-//   const response = await api.get('/api/blogs').expect('Content-Type', /application\/json/)
-//   assert.strictEqual(response.body.length, helper.initialBlog.length)
-// })
 
+test('blog list are equals than db', async () => {
+  const response = await api.get('/api/blogs').expect('Content-Type', /application\/json/)
+  assert.strictEqual(response.body.length, blogHelper.initialBlog.length)
+})
 
-// test('a valid blog can be added', async () => {
-//   const newBlog = {
-//     title: "WOLOLO PC",
-//     author: "Some random",
-//     url: "www.qweqwe.com.ar",
-//     likes: 14
-//   }
-//   await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: "WOLOLO PC",
+    author: "Some random",
+    url: "www.qweqwe.com.ar",
+    likes: 14
+  }
+  await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
 
-//   const response = await api.get('/api/blogs')
-//   const title = response.body.map(b => b.title)
+  const response = await api.get('/api/blogs')
+  const title = response.body.map(b => b.title)
 
-//   assert.strictEqual(response.body.length, helper.initialBlog.length + 1)
-//   assert(title.includes(newBlog.title))
-// })
+  assert.strictEqual(response.body.length, blogHelper.initialBlog.length + 1)
+  assert(title.includes(newBlog.title))
+})
 
-// test(`the unique identificator is 'id' for all the blogs.`, async () => {
-//   const blogsInDb = await helper.blogsInDb();
-//   blogsInDb.forEach(b => { assert.ok(b.hasOwnProperty('id'), `The object  ${JSON.stringify(b)}  does not have an 'id' property.`) })
-// })
+test(`the unique identificator is 'id' for all the blogs.`, async () => {
+  const blogsInDb = await blogHelper.blogsInDb();
+  blogsInDb.forEach(b => { assert.ok(b.hasOwnProperty('id'), `The object  ${JSON.stringify(b)}  does not have an 'id' property.`) })
+})
 
 after(async () => {
   await mongoose.connection.close()
