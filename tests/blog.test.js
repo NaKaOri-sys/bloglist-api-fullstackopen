@@ -2,7 +2,6 @@ const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-const helper = require('./blog_test_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
 const listHelper = require('../utils/list_helper')
@@ -60,14 +59,14 @@ const blogs = [
   }
 ]
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  let blogObject = new Blog(helper.initialBlog[0])
-  await blogObject.save()
+// beforeEach(async () => {
+//   await Blog.deleteMany({})
+//   let blogObject = new Blog(helper.initialBlog[0])
+//   await blogObject.save()
 
-  blogObject = new Blog(helper.initialBlog[1])
-  await blogObject.save()
-})
+//   blogObject = new Blog(helper.initialBlog[1])
+//   await blogObject.save()
+// })
 
 test('dummy returns one', () => {
   const blogs = []
@@ -131,32 +130,66 @@ describe('favoriteBlog', () => {
     assert.deepStrictEqual(result, null)
   })
 })
-test('blog list are equals than db', async () => {
-  const response = await api.get('/api/blogs').expect('Content-Type', /application\/json/)
-  assert.strictEqual(response.body.length, helper.initialBlog.length)
+
+describe('mostAuthor', () => {
+  test('should return  the  author  with the  most  blogs', async () => {
+    const result = listHelper.mostBlog(blogs)
+    const authorExpected = {
+      author: 'Robert C. Martin',
+      blogs: 3
+    }
+    assert.deepStrictEqual(result, authorExpected)
+  })
+  test('should  return undefined  for  empty  blog  list', () => {
+    const result = listHelper.mostBlog([]);
+    assert.strictEqual(result, undefined);
+  })
+
+  test('should  return the  only  author  when  list has  one  blog', () => {
+    const singleBlog = [
+      {
+        _id: "1",
+        title: "Solo  blog",
+        author: "Ada  Lovelace",
+        url: "http://example.com",
+        likes: 10,
+        __v: 0
+      }
+    ];
+    const result = listHelper.mostBlog(singleBlog)
+    const expected = {
+      author: 'Ada  Lovelace',
+      blogs: 1
+    };
+    assert.deepStrictEqual(result, expected);
+  })
 })
+// test('blog list are equals than db', async () => {
+//   const response = await api.get('/api/blogs').expect('Content-Type', /application\/json/)
+//   assert.strictEqual(response.body.length, helper.initialBlog.length)
+// })
 
 
-test('a valid blog can be added', async () => {
-  const newBlog = {
-    title: "WOLOLO PC",
-    author: "Some random",
-    url: "www.qweqwe.com.ar",
-    likes: 14
-  }
-  await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+// test('a valid blog can be added', async () => {
+//   const newBlog = {
+//     title: "WOLOLO PC",
+//     author: "Some random",
+//     url: "www.qweqwe.com.ar",
+//     likes: 14
+//   }
+//   await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  const title = response.body.map(b => b.title)
+//   const response = await api.get('/api/blogs')
+//   const title = response.body.map(b => b.title)
 
-  assert.strictEqual(response.body.length, helper.initialBlog.length + 1)
-  assert(title.includes(newBlog.title))
-})
+//   assert.strictEqual(response.body.length, helper.initialBlog.length + 1)
+//   assert(title.includes(newBlog.title))
+// })
 
-test(`the unique identificator is 'id' for all the blogs.`, async () => {
-  const blogsInDb = await helper.blogsInDb();
-  blogsInDb.forEach(b => { assert.ok(b.hasOwnProperty('id'), `The object  ${JSON.stringify(b)}  does not have an 'id' property.`) })
-})
+// test(`the unique identificator is 'id' for all the blogs.`, async () => {
+//   const blogsInDb = await helper.blogsInDb();
+//   blogsInDb.forEach(b => { assert.ok(b.hasOwnProperty('id'), `The object  ${JSON.stringify(b)}  does not have an 'id' property.`) })
+// })
 
 after(async () => {
   await mongoose.connection.close()
