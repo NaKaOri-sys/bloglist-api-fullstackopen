@@ -164,6 +164,32 @@ describe('mostAuthor', () => {
     assert.deepStrictEqual(result, expected);
   })
 })
+
+describe('mostLikes', () => {
+  test('should  return  null  for  an empty  list', () => {
+    const result = listHelper.mostLikes([])
+    assert.strictEqual(result, undefined)
+  })
+
+  test('should return the author with the most likes', () => {
+    const result = listHelper.mostLikes(blogs)
+    const authorExpected = {
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    }
+    assert.deepStrictEqual(result, authorExpected)
+  })
+
+  test('should return  the  only  author  when  list  has  one blog', () => {
+    const singleBlog = [blogs[0]]
+    const result = listHelper.mostLikes(singleBlog)
+    const authorExpected = {
+      author: 'Michael Chan',
+      likes: 7
+    }
+    assert.deepStrictEqual(result, authorExpected)
+  })
+})
 // test('blog list are equals than db', async () => {
 //   const response = await api.get('/api/blogs').expect('Content-Type', /application\/json/)
 //   assert.strictEqual(response.body.length, helper.initialBlog.length)
