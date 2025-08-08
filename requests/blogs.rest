@@ -18,3 +18,13 @@ Content-Type: application/json
     "url": "www.rivxczr.com.ar",
     "likes": 111
 }
+###Create invalid blog
+POST {{urlBase}}/api/blogs
+Accept: application/json
+Content-Type: application/json
+
+{
+    "author": "Nahu",
+    "url": "www.rivxczr.com.ar",
+    "likes": 11
+}
