@@ -217,6 +217,44 @@ test(`the unique identificator is 'id' for all the blogs.`, async () => {
   blogsInDb.forEach(b => { assert.ok(b.hasOwnProperty('id'), `The object  ${JSON.stringify(b)}  does not have an 'id' property.`) })
 })
 
+test('a valid blog can be added ', async () => {
+  const newBlog = {
+    title: "River el más grande",
+    author: "Marcelo Daniel Gallardo",
+    url: "www.rivercamp.com.ar",
+    likes: 21
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  const response = await api.get('/api/blogs')
+
+  const title = response.body.map(blog => blog.title)
+  assert.strictEqual(response.body.length, blogHelper.initialBlog.length + 1)
+
+  assert(title.includes('River el más grande'))
+})
+
+test('should create a blog without likes property and this one is zero by default', async () => {
+  const newBlog = {
+    title: "GTA VI seguro es GOTY",
+    author: "Testing auth",
+    url: "www.pcgamermasterrace.com.ar"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  const response = await api.get('/api/blogs')
+  const createdBlog = response.body.find(blog => blog.title === newBlog.title)
+  assert(createdBlog)
+  assert.strictEqual(createdBlog.likes, 0)
+})
 after(async () => {
   await mongoose.connection.close()
 })
