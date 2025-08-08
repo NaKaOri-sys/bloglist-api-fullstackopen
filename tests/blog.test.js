@@ -257,27 +257,26 @@ test('should create a blog without likes property and this one is zero by defaul
 })
 
 test('should not create a blog when the title or the url are missing.', async () => {
-  const blogWhitoutTitle = {
+  const blogWhithoutTitle = {
     author: "Testing auth",
     url: "www.pcgamermasterrace.com.ar"
   }
-  const blogWhitoutUrl = {
+  const blogWhithoutUrl = {
     title: "GTA VI seguro es GOTY",
     author: "Testing auth",
   }
 
   const res = await api
     .post('/api/blogs')
-    .send(blogWhitoutTitle)
-    // .expect(400)
-    // .expect('Content-Type', /application\/json/)
-  console.log('qweqwe', res);
+    .send(blogWhithoutTitle)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
   
-  // await api
-  //   .post('/api/blogs')
-  //   .send(blogWhitoutUrl)
-  //   .expect(400)
-  //   .expect('Content-Type', /application\/json/)
+  await api
+    .post('/api/blogs')
+    .send(blogWhithoutUrl)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
 })
 
 after(async () => {

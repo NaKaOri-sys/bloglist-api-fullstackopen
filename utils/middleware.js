@@ -1,7 +1,6 @@
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
-    logger.info('asdas', request)
     logger.info('Method:', request.method)
     logger.info('Path:  ', request.path)
     logger.info('Body:  ', request.body)
@@ -14,8 +13,7 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-    // logger.error(error.message)
-    logger.error('asdasds',error)
+    logger.error(error.message)
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
     }
