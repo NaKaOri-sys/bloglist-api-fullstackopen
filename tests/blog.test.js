@@ -271,12 +271,40 @@ test('should not create a blog when the title or the url are missing.', async ()
     .send(blogWhithoutTitle)
     .expect(400)
     .expect('Content-Type', /application\/json/)
-  
+
   await api
     .post('/api/blogs')
     .send(blogWhithoutUrl)
     .expect(400)
     .expect('Content-Type', /application\/json/)
+})
+
+describe('delete blog', () => {
+  test('deletes an existing blog', async () => {
+    const blogsInDb = await blogHelper.blogsInDb()
+    const blogToDelete = blogsInDb[0]
+
+    const res = await api.delete(`/api/blogs/${blogToDelete.id}`)
+    assert.strictEqual(res.status, 204)
+
+    const blogs = await Blog.find({})
+    assert.strictEqual(blogs.length, blogsInDb.length - 1)
+  })
+
+  test('returns 404 if blog does not exist', async () => {
+    const validNonExistingId = new mongoose.Types.ObjectId()
+
+    const res = await api.delete(`/api/blogs/${validNonExistingId}`)
+    assert.strictEqual(res.status, 404)
+  })
+
+  test('returns 400 for malformed blog ID', async () => {
+    const invalidId = 'id-malformado'
+
+    const res = await api.delete(`/api/blogs/${invalidId}`)
+    assert.strictEqual(res.status, 400)
+  })
+
 })
 
 after(async () => {

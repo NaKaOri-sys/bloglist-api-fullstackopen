@@ -28,3 +28,6 @@ Content-Type: application/json
     "url": "www.rivxczr.com.ar",
     "likes": 11
 }
+
+###Delete blog
+DELETE {{urlBase}}/api/blogs/688cf96bae5a443a28c0a61e
