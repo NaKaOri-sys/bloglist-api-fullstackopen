@@ -300,12 +300,64 @@ describe('delete blog', () => {
 
   test('returns 400 for malformed blog ID', async () => {
     const invalidId = 'id-malformado'
-
     const res = await api.delete(`/api/blogs/${invalidId}`)
     assert.strictEqual(res.status, 400)
   })
 
 })
+
+describe('update blog', () => {
+  test('successfully updates the likes of an existing blog', async () => {
+    const blogsAtStart = await blogHelper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const updatedLikes = { likes: blogToUpdate.likes + 1 }
+    const response = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedLikes)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.likes, updatedLikes.likes)
+  })
+
+  test('returns 400 if likes is not a number', async () => {
+    const blogsAtStart = await blogHelper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const invalidLikes = { likes: 'a lot' }
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(invalidLikes)
+      .expect(400)
+  })
+
+  test('returns 400 if likes is negative', async () => {
+    const blogsAtStart = await blogHelper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const invalidLikes = { likes: -5 }
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(invalidLikes)
+      .expect(400)
+  })
+
+  test('returns 404 if blog does not exist', async () => {
+    const nonExistingId = await blogHelper.nonExistingId()
+    await api
+      .put(`/api/blogs/${nonExistingId}`)
+      .send({ likes: 10 })
+      .expect(404)
+  })
+
+  test('returns 400 if blog ID is malformed', async () => {
+    await api
+      .put('/api/blogs/invalid-id-123')
+      .send({ likes: 10 })
+      .expect(400)
+  })
+})
+
 
 after(async () => {
   await mongoose.connection.close()

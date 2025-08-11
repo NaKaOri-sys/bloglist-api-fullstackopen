@@ -31,3 +31,21 @@ Content-Type: application/json
 
 ###Delete blog
 DELETE {{urlBase}}/api/blogs/688cf96bae5a443a28c0a61e
+
+###Update blog
+PUT {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c
+Accept: application/json
+Content-Type: application/json
+
+{
+    "likes": 1
+}
+
+###Update whithout blog
+PUT {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c
+Accept: application/json
+Content-Type: application/json
+
+{
+
+}
