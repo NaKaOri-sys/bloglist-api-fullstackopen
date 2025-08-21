@@ -1,0 +1,19 @@
+@urlBase = http://localhost:3001/api
+
+###GetAll 
+{{urlBase}}/users
+
+###GetByID
+GET {{urlBase}/users/687321b5b3e4c8a425f5c57c
+
+
+###Create user
+POST {{urlBase}}/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "Lolaso",
+    "name": "Nahu Nievas",
+    "password": "1234"
+}
