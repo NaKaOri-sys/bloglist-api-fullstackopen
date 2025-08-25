@@ -2,16 +2,12 @@ const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: [true, 'username is required.'],
+    minlength: [3, 'username must be at least 3 characters long.'],
+    unique: true
   },
-  name: {
-    type: String,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
-  }
+  name: String,
+  password: String,
 })
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {

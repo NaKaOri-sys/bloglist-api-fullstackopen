@@ -20,13 +20,11 @@ describe('when there is initially one user in db', () => {
 
   test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await listHelper.usersInDb()
-
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
       password: 'salainen',
     }
-    console.log('asdasd', newUser);
 
     await api
       .post('/api/users')
@@ -40,6 +38,73 @@ describe('when there is initially one user in db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
   })
+
+  test('creation  fails  with proper  statuscode  and  message if  username  is  too short', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+    const newUser = {
+      username: 'ro',  //  menos  de 3  caracteres
+      name: 'Shorty',
+      password: 'validpassword',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('creation  fails  if  password is  missing', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+    const newUser = {
+      username: 'nopassword',
+      name: 'No Pass',
+      //  falta  password
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('creation  fails  if password  is  too  short', async () => {
+    const usersAtStart = await listHelper.usersInDb()
+    const newUser = {
+      username: 'shortpass',
+      name: 'Tiny Pass',
+      password: '12',  //  menos  de 3  caracteres
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await listHelper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('should  fail  when  inserting a  user  with  duplicate username', async () => {
+    const duplicatedUser = {
+      username: 'root',
+      name: 'Second  User',
+      password: 'password456'
+    }
+
+    await api
+      .post('/api/users')
+      .send(duplicatedUser)
+      .expect(400)
+  })
+
 })
 after(async () => {
   await mongoose.connection.close()
