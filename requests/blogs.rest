@@ -1,4 +1,5 @@
 @urlBase = http://localhost:3001
+@idUser = 68a785aafcee282f267989d0
 
 ###GetAll 
 {{urlBase}}/api/blogs
@@ -13,10 +14,11 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "title": "Lolaso ",
-    "author": "Nahu",
-    "url": "www.rivxczr.com.ar",
-    "likes": 111
+    "title": "AgeOfEmpire",
+    "author": "Nahu N",
+    "url": "www.qweqweq.com.ar",
+    "likes": 1321,
+    "userId": "{{idUser}}"
 }
 ###Create invalid blog
 POST {{urlBase}}/api/blogs
@@ -30,7 +32,7 @@ Content-Type: application/json
 }
 
 ###Delete blog
-DELETE {{urlBase}}/api/blogs/688cf96bae5a443a28c0a61e
+DELETE {{urlBase}}/api/blogs/68ae071b3c3327ed305c01f9
 
 ###Update blog
 PUT {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c

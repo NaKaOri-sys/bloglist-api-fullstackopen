@@ -1,14 +1,15 @@
 const blogsRouter = require('express').Router()
 const logger = require('../utils/logger')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
   const id = request.params.id
-  const blog = await Blog.findById(id)
+  const blog = await Blog.findById(id).populate('user')
   if (!blog) {
     response.status(404).json({ error: 'No blog found with the given ID.' })
     return
@@ -17,8 +18,20 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  const { title, author, url, likes, userId } = request.body
+  const user = await User.findById(userId)
+  if (!user) {
+    response.status(404).json({ error: 'No user found with the fiven ID.' })
+    return
+  }
+
+  const blog = new Blog({
+    title, author, url, likes, user: user._id
+  })
   const result = await blog.save()
+  user.blogs = user.blogs.concat(result._id)
+  await user.save()
+
   response.status(201).json(result)
 })
 
@@ -40,7 +53,7 @@ blogsRouter.put('/:id', async (request, response) => {
     response.status(400).json({ error: 'Likes must be non-negative number.' })
     return
   }
-  const res = await Blog.findByIdAndUpdate(id, {likes}, { new: true })
+  const res = await Blog.findByIdAndUpdate(id, { likes }, { new: true })
   if (!res) {
     response.status(404).json({ error: 'No blog found with the given ID.' })
     return
