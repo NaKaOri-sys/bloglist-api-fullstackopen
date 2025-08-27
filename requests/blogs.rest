@@ -1,5 +1,6 @@
 @urlBase = http://localhost:3001
 @idUser = 68a785aafcee282f267989d0
+@token= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkxvbGFzbyIsImlkIjoiNjhhNzg1YWFmY2VlMjgyZjI2Nzk4OWQwIiwiaWF0IjoxNzU2MzIzNjAzfQ.1s4tizzfY-vRqN7REdkWXTsF63rMWPAOfvN1JNX56Wo
 
 ###GetAll 
 {{urlBase}}/api/blogs
@@ -12,6 +13,7 @@ GET {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c
 POST {{urlBase}}/api/blogs
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
     "title": "AgeOfEmpire",
@@ -20,6 +22,21 @@ Content-Type: application/json
     "likes": 1321,
     "userId": "{{idUser}}"
 }
+
+###Create valid blog but with invalid token
+POST {{urlBase}}/api/blogs
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer asdas12312wqeasd12414
+
+{
+    "title": "AgeOfEmpire",
+    "author": "Nahu N",
+    "url": "www.qweqweq.com.ar",
+    "likes": 1321,
+    "userId": "{{idUser}}"
+}
+
 ###Create invalid blog
 POST {{urlBase}}/api/blogs
 Accept: application/json
@@ -32,7 +49,7 @@ Content-Type: application/json
 }
 
 ###Delete blog
-DELETE {{urlBase}}/api/blogs/68ae071b3c3327ed305c01f9
+DELETE {{urlBase}}/api/blogs/68ae07d96425249299df9d87
 
 ###Update blog
 PUT {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c

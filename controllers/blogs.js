@@ -1,7 +1,17 @@
 const blogsRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const logger = require('../utils/logger')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
@@ -18,8 +28,13 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const { title, author, url, likes, userId } = request.body
-  const user = await User.findById(userId)
+  const { title, author, url, likes } = request.body
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+
   if (!user) {
     response.status(404).json({ error: 'No user found with the fiven ID.' })
     return

@@ -1,0 +1,21 @@
+@url=http://localhost:3001/api/
+
+
+###Login
+POST {{url}}login
+Content-Type: application/json
+
+{
+    "username": "Lolaso",
+    "password": "1234"
+}
+
+###Login bad
+POST {{url}}login
+Content-Type: application/json
+
+{
+    "username": "Lolaso",
+    "password": "123456789"
+}
+
