@@ -1,12 +1,21 @@
 @url=http://localhost:3001/api/
 
 
-###Login
+###Login lolaso
 POST {{url}}login
 Content-Type: application/json
 
 {
     "username": "Lolaso",
+    "password": "1234"
+}
+
+###Login Jhon
+POST {{url}}login
+Content-Type: application/json
+
+{
+    "username": "lltest",
     "password": "1234"
 }
 

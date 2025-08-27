@@ -1,6 +1,7 @@
 @urlBase = http://localhost:3001
 @idUser = 68a785aafcee282f267989d0
 @token= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkxvbGFzbyIsImlkIjoiNjhhNzg1YWFmY2VlMjgyZjI2Nzk4OWQwIiwiaWF0IjoxNzU2MzI0Njg3fQ.bli1EEyc7Ka9mme_sxpPnrEbYv3AUxDMjSxrN71IB1Q
+@tokenJon= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxsdGVzdCIsImlkIjoiNjhhZjY3OTliMGIxZWUyZjdiZTg1MWYxIiwiaWF0IjoxNzU2MzI3NjUxfQ.t52PIc-pms2LyHh8PPPGHqvu-0-QXdng5Ul4OzEh3SY
 
 ###GetAll 
 {{urlBase}}/api/blogs
@@ -48,8 +49,13 @@ Content-Type: application/json
     "likes": 11
 }
 
-###Delete blog
-DELETE {{urlBase}}/api/blogs/68af5f8c3d1b097048aa0b07
+###Delete blog but token not corresponding to user than created blog
+DELETE {{urlBase}}/api/blogs/68af647f399bf8754f11d91a
+Authorization: Bearer {{tokenJon}}
+
+###Delete blog ok
+DELETE {{urlBase}}/api/blogs/68af647f399bf8754f11d91a
+Authorization: Bearer {{token}}
 
 ###Update blog
 PUT {{urlBase}}/api/blogs/687321b5b3e4c8a425f5c57c
