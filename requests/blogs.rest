@@ -1,6 +1,6 @@
 @urlBase = http://localhost:3001
 @idUser = 68a785aafcee282f267989d0
-@token= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkxvbGFzbyIsImlkIjoiNjhhNzg1YWFmY2VlMjgyZjI2Nzk4OWQwIiwiaWF0IjoxNzU2MzI0Njg3fQ.bli1EEyc7Ka9mme_sxpPnrEbYv3AUxDMjSxrN71IB1Q
+@token= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkxvbGFzbyIsImlkIjoiNjhhNzg1YWFmY2VlMjgyZjI2Nzk4OWQwIiwiaWF0IjoxNzU2MzI5MzE0fQ.ZKQBw9PocqMH1DrSmGQgYsIxYM_XQS6jSI_DEVvjgng
 @tokenJon= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxsdGVzdCIsImlkIjoiNjhhZjY3OTliMGIxZWUyZjdiZTg1MWYxIiwiaWF0IjoxNzU2MzI3NjUxfQ.t52PIc-pms2LyHh8PPPGHqvu-0-QXdng5Ul4OzEh3SY
 
 ###GetAll 
@@ -20,8 +20,20 @@ Authorization: Bearer {{token}}
     "title": "AgeOfEmpire",
     "author": "Nahu N",
     "url": "www.qweqweq.com.ar",
-    "likes": 1321,
-    "userId": "{{idUser}}"
+    "likes": 1321
+}
+
+### Create another blog
+POST {{urlBase}}/api/blogs
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{tokenJon}}
+
+{
+    "title": "Command & Conquer",
+    "author": "Dev Tester",
+    "url": "https://example.com/cnc",
+    "likes": 888
 }
 
 ###Create valid blog but with invalid token
@@ -54,7 +66,7 @@ DELETE {{urlBase}}/api/blogs/68af647f399bf8754f11d91a
 Authorization: Bearer {{tokenJon}}
 
 ###Delete blog ok
-DELETE {{urlBase}}/api/blogs/68af647f399bf8754f11d91a
+DELETE {{urlBase}}/api/blogs/68b074a4637a686741cfe9c1
 Authorization: Bearer {{token}}
 
 ###Update blog
