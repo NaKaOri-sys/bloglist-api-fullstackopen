@@ -48,11 +48,11 @@ blogsRouter.delete("/:id", middleware.userExtractor, async (request, response) =
     return response.status(401).json({ error: "Token missing or invalid" });
   }
   const blog = await Blog.findById(id);
+  if (!blog) {
+    response.status(404).json({ error: "No blog found with the given ID." });
+    return;
+  }
   if (blog.user.toString() !== user.id.toString()) {
-    if (!blog) {
-      response.status(404).json({ error: "No blog found with the given ID." });
-      return;
-    }
     response.status(401).json({ error: "Only user has been create blog can delete it." });
     return;
   }

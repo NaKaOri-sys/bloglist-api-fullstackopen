@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const User = require('../models/user')
+const bcrypt = require('bcryptjs')
 
 const dummy = (blogs) => {
     return 1
@@ -48,11 +49,21 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
+const initializeUser = async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', name: 'roto', password: passwordHash })
+
+    await user.save()
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
     mostBlog,
     mostLikes,
-    usersInDb
+    usersInDb,
+    initializeUser
 }

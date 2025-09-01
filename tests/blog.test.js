@@ -60,11 +60,15 @@ const blogs = [
 ]
 
 beforeEach(async () => {
+  await listHelper.initializeUser()
+  const user = await listHelper.usersInDb()
   await Blog.deleteMany({})
   let blogObject = new Blog(blogHelper.initialBlog[0])
+  blogObject.user = user[0].id
   await blogObject.save()
 
   blogObject = new Blog(blogHelper.initialBlog[1])
+  blogObject.user = user[0].id
   await blogObject.save()
 })
 
@@ -203,7 +207,13 @@ test('a valid blog can be added', async () => {
     url: "www.qweqwe.com.ar",
     likes: 14
   }
-  await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/)
+  const loginResponse = await api.post('/api/login').send({
+    username: 'root',
+    password: 'sekret'
+  })
+  const token = loginResponse.body.token
+
+  await api.post('/api/blogs').send(newBlog).set({ authorization: `Bearer ${token}` }).expect(201).expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
   const title = response.body.map(b => b.title)
@@ -217,7 +227,7 @@ test(`the unique identificator is 'id' for all the blogs.`, async () => {
   blogsInDb.forEach(b => { assert.ok(b.hasOwnProperty('id'), `The object  ${JSON.stringify(b)}  does not have an 'id' property.`) })
 })
 
-test('a valid blog can be added ', async () => {
+test('a valid blog cannot be added because not token in header', async () => {
   const newBlog = {
     title: "River el más grande",
     author: "Marcelo Daniel Gallardo",
@@ -228,14 +238,8 @@ test('a valid blog can be added ', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
-    .expect(201)
+    .expect(401)
     .expect('Content-Type', /application\/json/)
-  const response = await api.get('/api/blogs')
-
-  const title = response.body.map(blog => blog.title)
-  assert.strictEqual(response.body.length, blogHelper.initialBlog.length + 1)
-
-  assert(title.includes('River el más grande'))
 })
 
 test('should create a blog without likes property and this one is zero by default', async () => {
@@ -244,10 +248,15 @@ test('should create a blog without likes property and this one is zero by defaul
     author: "Testing auth",
     url: "www.pcgamermasterrace.com.ar"
   }
-
+  const loginResponse = await api.post('/api/login').send({
+    username: 'root',
+    password: 'sekret'
+  })
+  const token = loginResponse.body.token
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set({ authorization: `Bearer ${token}` })
     .expect(201)
     .expect('Content-Type', /application\/json/)
   const response = await api.get('/api/blogs')
@@ -265,16 +274,23 @@ test('should not create a blog when the title or the url are missing.', async ()
     title: "GTA VI seguro es GOTY",
     author: "Testing auth",
   }
+  const loginResponse = await api.post('/api/login').send({
+    username: 'root',
+    password: 'sekret'
+  })
+  const token = loginResponse.body.token
 
-  const res = await api
+  await api
     .post('/api/blogs')
     .send(blogWhithoutTitle)
+    .set({ authorization: `Bearer ${token}` })
     .expect(400)
     .expect('Content-Type', /application\/json/)
 
   await api
     .post('/api/blogs')
     .send(blogWhithoutUrl)
+    .set({ authorization: `Bearer ${token}` })
     .expect(400)
     .expect('Content-Type', /application\/json/)
 })
@@ -283,8 +299,13 @@ describe('delete blog', () => {
   test('deletes an existing blog', async () => {
     const blogsInDb = await blogHelper.blogsInDb()
     const blogToDelete = blogsInDb[0]
-
+    const loginResponse = await api.post('/api/login').send({
+      username: 'root',
+      password: 'sekret'
+    })
+    const token = loginResponse.body.token
     const res = await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .set({ authorization: `Bearer ${token}` })
     assert.strictEqual(res.status, 204)
 
     const blogs = await Blog.find({})
@@ -293,14 +314,25 @@ describe('delete blog', () => {
 
   test('returns 404 if blog does not exist', async () => {
     const validNonExistingId = new mongoose.Types.ObjectId()
-
+    const loginResponse = await api.post('/api/login').send({
+      username: 'root',
+      password: 'sekret'
+    })
+    const token = loginResponse.body.token
     const res = await api.delete(`/api/blogs/${validNonExistingId}`)
+      .set({ authorization: `Bearer ${token}` })
     assert.strictEqual(res.status, 404)
   })
 
   test('returns 400 for malformed blog ID', async () => {
     const invalidId = 'id-malformado'
+    const loginResponse = await api.post('/api/login').send({
+      username: 'root',
+      password: 'sekret'
+    })
+    const token = loginResponse.body.token
     const res = await api.delete(`/api/blogs/${invalidId}`)
+      .set({ authorization: `Bearer ${token}` })
     assert.strictEqual(res.status, 400)
   })
 
